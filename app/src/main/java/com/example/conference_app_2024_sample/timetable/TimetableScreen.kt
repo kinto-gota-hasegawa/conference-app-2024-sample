@@ -1,5 +1,6 @@
 package com.example.conference_app_2024_sample.timetable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +22,11 @@ import com.example.conference_app_2024_sample.data.timetable.TimetableItem
 import com.example.conference_app_2024_sample.data.timetable.TimetableUiType
 import com.example.conference_app_2024_sample.rememberEventFlow
 
+const val TIMETABLE_SCREEN_ROUTE = "timetableScreenRoute"
+
 @Composable
 fun TimetableScreen(
+    onTimetableItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     eventFlow: EventFlow<TimetableScreenEvent> = rememberEventFlow(),
     uiState: TimetableScreenUiState = timetableScreenPresenter(
@@ -31,6 +35,7 @@ fun TimetableScreen(
 ) {
     TimetableScreen(
         uiState = uiState,
+        onTimetableItemClick = onTimetableItemClick,
         onTimetableUiChangeClick = {
             eventFlow.tryEmit(TimetableScreenEvent.UiTypeChange)
         },
@@ -56,6 +61,7 @@ sealed interface TimetableUiState {
 @Composable
 fun TimetableScreen(
     uiState: TimetableScreenUiState,
+    onTimetableItemClick: () -> Unit,
     onTimetableUiChangeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +111,7 @@ fun TimetableScreen(
                     items(contentUiState.items) { item ->
                         Text(
                             text = item.title,
-                            modifier = Modifier.padding(top = 12.dp, start = 16.dp)
+                            modifier = Modifier.padding(top = 12.dp, start = 16.dp).clickable(onClick = onTimetableItemClick),
                         )
                     }
                 }
@@ -115,7 +121,7 @@ fun TimetableScreen(
                     items(contentUiState.items) { item ->
                         Text(
                             text = item.title,
-                            modifier = Modifier.padding(top = 12.dp, start = 16.dp)
+                            modifier = Modifier.padding(top = 12.dp, start = 16.dp).clickable(onClick = onTimetableItemClick),
                         )
                     }
                 }

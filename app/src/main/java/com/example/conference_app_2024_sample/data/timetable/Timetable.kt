@@ -1,7 +1,6 @@
 package com.example.conference_app_2024_sample.data.timetable
 
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.delay
 
 data class Timetable(
     val items: List<TimetableItem> = listOf(),
@@ -23,7 +22,6 @@ enum class TimetableUiType {
 }
 
 val dataTimetableFlow = flow {
-    delay(4000)
     emit(DATA_TIMETABLE)
 }
 

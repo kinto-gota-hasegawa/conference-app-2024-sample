@@ -1,8 +1,11 @@
 package com.example.conference_app_2024_sample.repository
 
 import androidx.compose.runtime.Composable
-import com.example.conference_app_2024_sample.data.timetable.DATA_TIMETABLE
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.example.conference_app_2024_sample.collectAsRetainedState
 import com.example.conference_app_2024_sample.data.timetable.Timetable
+import com.example.conference_app_2024_sample.data.timetable.dataTimetableFlow
 
 
 interface SessionsRepository {
@@ -15,7 +18,11 @@ class DefaultSessionsRepository(
 ): SessionsRepository {
     @Composable
     override fun timetable(): Timetable {
-        return DATA_TIMETABLE
+        val timetable by remember {
+            dataTimetableFlow
+        }.collectAsRetainedState(Timetable())
+
+        return timetable
     }
 }
 

@@ -4,14 +4,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +34,7 @@ const val TIMETABLE_SCREEN_ROUTE = "timetableScreenRoute"
 @Composable
 fun TimetableScreen(
     onTimetableItemClick: () -> Unit,
+    onTestClick: () -> Unit,
     modifier: Modifier = Modifier,
     eventFlow: EventFlow<TimetableScreenEvent> = rememberEventFlow(),
     uiState: TimetableScreenUiState = timetableScreenPresenter(
@@ -36,6 +44,7 @@ fun TimetableScreen(
     TimetableScreen(
         uiState = uiState,
         onTimetableItemClick = onTimetableItemClick,
+        onTestClick = onTestClick,
         onTimetableUiChangeClick = {
             eventFlow.tryEmit(TimetableScreenEvent.UiTypeChange)
         },
@@ -62,6 +71,7 @@ sealed interface TimetableUiState {
 fun TimetableScreen(
     uiState: TimetableScreenUiState,
     onTimetableItemClick: () -> Unit,
+    onTestClick: () -> Unit,
     onTimetableUiChangeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,28 +84,23 @@ fun TimetableScreen(
                 text = "Timetable",
                 modifier = Modifier.weight(1f),
             )
+            IconButton(onClick = onTestClick) {
+                Icon(Icons.Default.Search, "")
+            }
+            Spacer(modifier = Modifier.width(4.dp))
             when (uiState.timetableUiType) {
                 TimetableUiType.List -> {
-                    Button(
-                        onClick = onTimetableUiChangeClick,
-                    ) {
-                        Text(
-                            text = "To Grid",
-                            modifier = Modifier.padding(end = 16.dp),
-                        )
+                    IconButton(onClick = onTimetableUiChangeClick) {
+                        Icon(Icons.Default.Menu, "")
                     }
                 }
                 TimetableUiType.Grid -> {
-                    Button(
-                        onClick = onTimetableUiChangeClick,
-                    ) {
-                        Text(
-                            text = "To List",
-                            modifier = Modifier.padding(end = 16.dp),
-                        )
+                    IconButton(onClick = onTimetableUiChangeClick) {
+                        Icon(Icons.AutoMirrored.Default.List, "")
                     }
                 }
             }
+            Spacer(modifier = Modifier.width(4.dp))
         }
         when (val contentUiState = uiState.contentUiState) {
             is TimetableUiState.Empty -> {

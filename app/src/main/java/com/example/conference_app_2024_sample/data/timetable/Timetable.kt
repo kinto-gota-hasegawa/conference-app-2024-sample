@@ -1,5 +1,6 @@
 package com.example.conference_app_2024_sample.data.timetable
 
+import android.util.Log
 import kotlinx.coroutines.flow.flow
 
 data class Timetable(

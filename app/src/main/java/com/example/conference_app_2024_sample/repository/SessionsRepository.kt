@@ -3,6 +3,7 @@ package com.example.conference_app_2024_sample.repository
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import com.example.conference_app_2024_sample.LocalRepositories
 import com.example.conference_app_2024_sample.collectAsRetainedState
 import com.example.conference_app_2024_sample.data.timetable.Timetable
 import com.example.conference_app_2024_sample.data.timetable.dataTimetableFlow
@@ -26,3 +27,8 @@ class DefaultSessionsRepository(
     }
 }
 
+
+@Composable
+fun localSessionsRepository(): SessionsRepository {
+    return LocalRepositories.current[SessionsRepository::class] as SessionsRepository
+}

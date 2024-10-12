@@ -1,6 +1,5 @@
 package com.example.conference_app_2024_sample.data.timetable
 
-import android.util.Log
 import kotlinx.coroutines.flow.flow
 
 data class Timetable(
@@ -27,7 +26,7 @@ val dataTimetableFlow = flow {
 }
 
 private val DATA_TIMETABLE = Timetable(
-    items = List(10) {
+    items = List(40) {
         TimetableItem(
             id = TimetableItemId("id$it"),
             title = "Session $it",

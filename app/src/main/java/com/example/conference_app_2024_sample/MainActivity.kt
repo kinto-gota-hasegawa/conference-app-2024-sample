@@ -14,9 +14,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.conference_app_2024_sample.data.timetable.TimetableItemId
 import com.example.conference_app_2024_sample.repository.DefaultSessionsRepository
 import com.example.conference_app_2024_sample.repository.SessionsRepository
 import com.example.conference_app_2024_sample.timetable.TIMETABLE_SCREEN_ROUTE
@@ -69,8 +72,8 @@ fun KaigiNavHost(
             route = TIMETABLE_SCREEN_ROUTE,
         ) {
             TimetableScreen(
-                onTimetableItemClick = {
-                    navController.navigate(TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE)
+                onTimetableItemClick = { id ->
+                    navController.navigate(TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE + "/${id.value}")
                 },
                 onTestClick = {
                     navController.navigate(TEST_SCREEN_ROUTE)
@@ -79,9 +82,13 @@ fun KaigiNavHost(
         }
 
         composable(
-            route = TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE,
-        ) {
-            TimetableItemDetailScreen()
+            route = "$TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("itemId")!!
+            TimetableItemDetailScreen(
+                id = TimetableItemId(id)
+            )
         }
 
         composable(

@@ -11,7 +11,7 @@ rin = "0.3.0"
 composeBom = "2024.04.01"
 navigation = "2.8.2"
 robolectric = "4.13"
-hilt-version = "2.44"
+hilt-version = "2.48"
 
 
 [libraries]

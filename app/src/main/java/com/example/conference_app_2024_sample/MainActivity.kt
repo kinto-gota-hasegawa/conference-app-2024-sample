@@ -1,6 +1,7 @@
 package com.example.conference_app_2024_sample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,15 +12,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,26 +24,57 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.conference_app_2024_sample.data.timetable.TimetableItemId
 import com.example.conference_app_2024_sample.repository.DefaultSessionsRepository
+import com.example.conference_app_2024_sample.repository.RepositoryProvider
 import com.example.conference_app_2024_sample.repository.SessionsRepository
 import com.example.conference_app_2024_sample.timetable.TIMETABLE_SCREEN_ROUTE
 import com.example.conference_app_2024_sample.timetable.TimetableScreen
 import com.example.conference_app_2024_sample.timetableItemDetail.TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE
 import com.example.conference_app_2024_sample.timetableItemDetail.TimetableItemDetailScreen
 import com.example.conference_app_2024_sample.ui.theme.Conferenceapp2024sampleTheme
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntKey
+import dagger.multibindings.IntoMap
 import io.github.takahirom.rin.rememberRetained
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+
+@Module
+@InstallIn(SingletonComponent::class)
+object MainActivityModule {
+
+    @Provides
+    @IntoMap
+    @IntKey(1)
+    fun provideInt1(): String {
+        return "ABC"
+    }
+
+    @Provides
+    @IntoMap
+    @IntKey(2)
+    fun provideInt2(): String {
+        return "DEF"
+    }
+
+}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var repositoryProvider: RepositoryProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             Conferenceapp2024sampleTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RepositoryProvider {
+
+                    repositoryProvider.Provide {
                         KaigiNavHost(modifier = Modifier.padding(innerPadding))
                     }
                 }
@@ -56,26 +84,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RepositoryProvider(
-    content: @Composable () -> Unit,
-) {
-    CompositionLocalProvider(
-        LocalRepositories provides mapOf(
-            SessionsRepository::class to DefaultSessionsRepository(),
-        )
-    ) {
-        content()
-    }
-}
-
-val flow = MutableStateFlow(1)
-
-@Composable
 fun KaigiNavHost(
     modifier: Modifier = Modifier,
 ) {
 
-    var count by rememberRetained { mutableStateOf(1) }
     val navController = rememberNavController()
     NavHost(
         navController = navController,

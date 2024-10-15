@@ -33,10 +33,12 @@ import com.example.conference_app_2024_sample.timetable.TimetableScreen
 import com.example.conference_app_2024_sample.timetableItemDetail.TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE
 import com.example.conference_app_2024_sample.timetableItemDetail.TimetableItemDetailScreen
 import com.example.conference_app_2024_sample.ui.theme.Conferenceapp2024sampleTheme
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.takahirom.rin.rememberRetained
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

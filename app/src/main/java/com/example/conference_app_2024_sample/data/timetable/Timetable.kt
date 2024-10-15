@@ -22,12 +22,11 @@ enum class TimetableUiType {
 }
 
 val dataTimetableFlow = flow {
-    kotlinx.coroutines.delay(2000)
     emit(DATA_TIMETABLE)
 }
 
 private val DATA_TIMETABLE = Timetable(
-    items = List(40) {
+    items = List(50) {
         TimetableItem(
             id = TimetableItemId("id$it"),
             title = "Session $it",

@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.conference_app_2024_sample.EventFlow
+import com.example.conference_app_2024_sample.data.timetable.Timetable
 import com.example.conference_app_2024_sample.data.timetable.TimetableItem
 import com.example.conference_app_2024_sample.data.timetable.TimetableItemId
 import com.example.conference_app_2024_sample.data.timetable.TimetableUiType
@@ -61,6 +64,9 @@ fun TimetableScreen(
         onTimetableUiChangeClick = {
             eventFlow.tryEmit(TimetableScreenEvent.UiTypeChange)
         },
+        onBookmarked = {
+            eventFlow.tryEmit(TimetableScreenEvent.Bookmark(it))
+        },
         modifier = modifier,
     )
 }
@@ -73,11 +79,12 @@ data class TimetableScreenUiState(
 sealed interface TimetableUiState {
     data object Empty : TimetableUiState
     data class ListTimetable(
-        val items: List<TimetableItem>,
-    ): TimetableUiState
+        val timetable: Timetable,
+    ) : TimetableUiState
+
     data class GridTimetable(
-        val items: List<TimetableItem>,
-    ): TimetableUiState
+        val timetable: Timetable,
+    ) : TimetableUiState
 }
 
 @Composable
@@ -86,6 +93,7 @@ fun TimetableScreen(
     onTimetableItemClick: (id: TimetableItemId) -> Unit,
     onTestClick: () -> Unit,
     onTimetableUiChangeClick: () -> Unit,
+    onBookmarked: (id: TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -101,9 +109,9 @@ fun TimetableScreen(
                 text = "Timetable",
                 modifier = Modifier.weight(1f),
             )
-            IconButton(onClick = onTestClick) {
-                Icon(Icons.Default.Search, "")
-            }
+//            IconButton(onClick = onTestClick) {
+//                Icon(Icons.Default.Search, "")
+//            }
             Spacer(modifier = Modifier.width(4.dp))
             when (uiState.timetableUiType) {
                 TimetableUiType.List -> {
@@ -114,6 +122,7 @@ fun TimetableScreen(
                         Icon(Icons.Default.Menu, "")
                     }
                 }
+
                 TimetableUiType.Grid -> {
                     IconButton(
                         onClick = onTimetableUiChangeClick,
@@ -128,27 +137,33 @@ fun TimetableScreen(
         when (val contentUiState = uiState.contentUiState) {
             is TimetableUiState.Empty -> {
                 Box(
-                    modifier = Modifier.fillMaxSize().testTag(TIMETABLE_SCREEN_EMPTY_TAG),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(TIMETABLE_SCREEN_EMPTY_TAG),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text("Empty")
                 }
             }
+
             is TimetableUiState.ListTimetable -> {
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.testTag(TIMETABLE_SCREEN_LIST_TAG),
                 ) {
-                    items(contentUiState.items) { item ->
+                    items(contentUiState.timetable.items) { item ->
                         ListItem(
                             item = item,
+                            isBookmarked = contentUiState.timetable.bookmarks.contains(item.id),
                             onClickItem = onTimetableItemClick,
+                            onBookmarked = onBookmarked,
                             modifier = Modifier.testTag(TIMETABLE_ITEM_TAG),
                         )
                     }
                 }
             }
+
             is TimetableUiState.GridTimetable -> {
                 LazyVerticalGrid(
                     GridCells.Fixed(3),
@@ -157,10 +172,12 @@ fun TimetableScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.testTag(TIMETABLE_SCREEN_GRID_TAG),
                 ) {
-                    items(contentUiState.items) { item ->
+                    items(contentUiState.timetable.items) { item ->
                         ListItem(
                             item = item,
+                            isBookmarked = contentUiState.timetable.bookmarks.contains(item.id),
                             onClickItem = onTimetableItemClick,
+                            onBookmarked = onBookmarked,
                             modifier = Modifier.testTag(TIMETABLE_ITEM_TAG)
                         )
                     }
@@ -174,10 +191,12 @@ fun TimetableScreen(
 @Composable
 private fun ListItem(
     item: TimetableItem,
+    isBookmarked: Boolean,
     onClickItem: (id: TimetableItemId) -> Unit,
+    onBookmarked: (id: TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .clickable { onClickItem(item.id) }
             .fillMaxWidth()
@@ -186,6 +205,24 @@ private fun ListItem(
     ) {
         Text(
             text = item.title,
+            modifier = Modifier.weight(1f),
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        IconButton(onClick = {
+            onBookmarked(item.id)
+        }) {
+            if (isBookmarked) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "",
+                    tint = Color.Red,
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = "",
+                )
+            }
+        }
     }
 }

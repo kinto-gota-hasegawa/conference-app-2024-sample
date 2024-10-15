@@ -12,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,11 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.conference_app_2024_sample.EventFlow
 import com.example.conference_app_2024_sample.data.timetable.TimetableItem
 import com.example.conference_app_2024_sample.data.timetable.TimetableItemId
-import com.example.conference_app_2024_sample.data.timetable.TimetableUiType
+import com.example.conference_app_2024_sample.rememberEventFlow
 
 const val TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE = "timetableItemDetailScreenRoute"
 
@@ -34,8 +35,10 @@ const val TIMETABLE_ITEM_DETAIL_SCREEN_ROUTE = "timetableItemDetailScreenRoute"
 fun TimetableItemDetailScreen(
     id: TimetableItemId,
     modifier: Modifier = Modifier,
+    events : EventFlow<TimetableItemDetailEvent> = rememberEventFlow(),
     uiState: TimetableItemDetailScreenUiState = timetableItemDetailScreen(
         timetableItemId = id,
+        events = events,
     ),
 ) {
     Column(
@@ -50,10 +53,25 @@ fun TimetableItemDetailScreen(
                 text = "Timetable Item Detail",
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.FavoriteBorder, "")
+            if (uiState is TimetableItemDetailScreenUiState.Loaded) {
+                IconButton(onClick = {
+                    events.tryEmit(TimetableItemDetailEvent.Bookmark(id))
+                }) {
+                    if (uiState.isBookmarked) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "",
+                            tint = Color.Red,
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "",
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(4.dp))
             }
-            Spacer(modifier = Modifier.width(4.dp))
         }
     }
     Box(

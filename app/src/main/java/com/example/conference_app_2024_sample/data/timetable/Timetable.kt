@@ -22,6 +22,7 @@ enum class TimetableUiType {
 }
 
 val dataTimetableFlow = flow {
+    kotlinx.coroutines.delay(2000)
     emit(DATA_TIMETABLE)
 }
 

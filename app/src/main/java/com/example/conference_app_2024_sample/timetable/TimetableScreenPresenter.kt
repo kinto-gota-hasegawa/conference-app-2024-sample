@@ -3,6 +3,7 @@ package com.example.conference_app_2024_sample.timetable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import com.example.conference_app_2024_sample.EventEffect

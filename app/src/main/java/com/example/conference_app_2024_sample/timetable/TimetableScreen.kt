@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -30,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.conference_app_2024_sample.EventFlow
 import com.example.conference_app_2024_sample.data.timetable.TimetableItem
@@ -38,6 +38,11 @@ import com.example.conference_app_2024_sample.data.timetable.TimetableUiType
 import com.example.conference_app_2024_sample.rememberEventFlow
 
 const val TIMETABLE_SCREEN_ROUTE = "timetableScreenRoute"
+const val TIMETABLE_SCREEN_EMPTY_TAG = "TimetableScreenEmptyTAG"
+const val TIMETABLE_SCREEN_LIST_TAG = "TimetableScreenListTAG"
+const val TIMETABLE_SCREEN_GRID_TAG = "TimetableScreenGridTAG"
+const val TIMETABLE_UI_TYPE_BUTTON_TAG = "TimetableUiTypeButtonTAG"
+const val TIMETABLE_ITEM_TAG = "TimetableItemTAG"
 
 @Composable
 fun TimetableScreen(
@@ -102,12 +107,18 @@ fun TimetableScreen(
             Spacer(modifier = Modifier.width(4.dp))
             when (uiState.timetableUiType) {
                 TimetableUiType.List -> {
-                    IconButton(onClick = onTimetableUiChangeClick) {
+                    IconButton(
+                        onClick = onTimetableUiChangeClick,
+                        modifier = Modifier.testTag(TIMETABLE_UI_TYPE_BUTTON_TAG),
+                    ) {
                         Icon(Icons.Default.Menu, "")
                     }
                 }
                 TimetableUiType.Grid -> {
-                    IconButton(onClick = onTimetableUiChangeClick) {
+                    IconButton(
+                        onClick = onTimetableUiChangeClick,
+                        modifier = Modifier.testTag(TIMETABLE_UI_TYPE_BUTTON_TAG),
+                    ) {
                         Icon(Icons.AutoMirrored.Default.List, "")
                     }
                 }
@@ -117,7 +128,7 @@ fun TimetableScreen(
         when (val contentUiState = uiState.contentUiState) {
             is TimetableUiState.Empty -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().testTag(TIMETABLE_SCREEN_EMPTY_TAG),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text("Empty")
@@ -126,12 +137,14 @@ fun TimetableScreen(
             is TimetableUiState.ListTimetable -> {
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.testTag(TIMETABLE_SCREEN_LIST_TAG),
                 ) {
                     items(contentUiState.items) { item ->
                         ListItem(
                             item = item,
                             onClickItem = onTimetableItemClick,
+                            modifier = Modifier.testTag(TIMETABLE_ITEM_TAG),
                         )
                     }
                 }
@@ -142,11 +155,13 @@ fun TimetableScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.testTag(TIMETABLE_SCREEN_GRID_TAG),
                 ) {
                     items(contentUiState.items) { item ->
                         ListItem(
                             item = item,
-                            onClickItem = onTimetableItemClick
+                            onClickItem = onTimetableItemClick,
+                            modifier = Modifier.testTag(TIMETABLE_ITEM_TAG)
                         )
                     }
                 }
